@@ -146,6 +146,24 @@ def nan_statistics(df, nan_thresh=0.0):
     return res
 
 
+def inf_statistics(
+    df_,
+    numeric_types_=['float32', 'float64', 'int']
+):
+    '''
+    Collects only numeric data and checks, if
+    it has infinity values
+    '''
+    numeric_columns = []
+    for numeric_type in numeric_types_:
+        numeric_columns.extend(
+            df_.columns[df_.dtypes == numeric_type].values
+        )
+    res = np.isinf(df_.loc[:, numeric_columns]).sum()
+    print(res)
+    return res
+
+
 def visualize_datasets_distributions(
     dataframes_dict_,
     columns_,
