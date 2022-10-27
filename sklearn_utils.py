@@ -316,7 +316,14 @@ def plot_cv_results(
     return cv_metrics_results
 
 
-def fit_grid_search(models_dict_, X_, Y_, cv_, scoring_):
+def fit_grid_search(
+    models_dict_,
+    X_,
+    Y_,
+    cv_,
+    scoring_,
+    **kwargs
+):
     res = {
         name: None for name in list(models_dict_.keys())
     }
@@ -329,7 +336,8 @@ def fit_grid_search(models_dict_, X_, Y_, cv_, scoring_):
             cv=cv_,
             scoring=scoring_,
             return_train_score=True,
-            refit=True
+            refit=True,
+            verbose=kwargs.get('verbose') or 0
         )
 
         grid_search_result = grid_search_estimator.fit(X_, Y_)
@@ -337,7 +345,15 @@ def fit_grid_search(models_dict_, X_, Y_, cv_, scoring_):
     return res
 
 
-def fit_randomized_search(models_dict_, X_, Y_, cv_, n_iter_, scoring_):
+def fit_randomized_search(
+    models_dict_,
+    X_,
+    Y_,
+    cv_,
+    n_iter_,
+    scoring_,
+    **kwargs
+):
     RANDOM_STATE = 42
     res = {}
     for name, model in models_dict_.items():
@@ -351,7 +367,8 @@ def fit_randomized_search(models_dict_, X_, Y_, cv_, n_iter_, scoring_):
             scoring=scoring_,
             return_train_score=True,
             refit=True,
-            random_state=RANDOM_STATE
+            random_state=RANDOM_STATE,
+            verbose=kwargs.get('verbose') or 0
         )
 
         rand_search_res = estimator.fit(X_, Y_)
