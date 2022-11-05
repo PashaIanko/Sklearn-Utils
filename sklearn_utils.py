@@ -338,7 +338,7 @@ def _collect_train_test_scores(cv_results_, best_estimator_index_):
     return train_scores, test_scores
 
 
-def fit_grid_search_(
+def fit_grid_search(
     models_dict_,
     X_,
     Y_,
