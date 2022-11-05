@@ -376,7 +376,7 @@ def fit_grid_search(
         _, ax = plt.subplots()
         ax.bar(x - WIDTH / 2, test_scores, WIDTH, label='validation')
         ax.bar(x + WIDTH / 2, train_scores, WIDTH, label='train')
-        ax.set_title(name)
+        ax.set_title(f'{name} (best_estimator) cross validation')
         ax.legend(loc='lower right')
         ax.set_xlabel('Number of fold')
         ax.set_ylabel('Metrics')
