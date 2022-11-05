@@ -316,7 +316,29 @@ def plot_cv_results(
     return cv_metrics_results
 
 
-def fit_grid_search(
+def _collect_train_test_scores(cv_results_, best_estimator_index_):
+
+    n_splits = len(
+        [k for k in list(cv_results_.keys())
+            if ('train_score' in k) and ('split') in k])
+    train_scores = []
+    test_scores = []
+
+    for split in np.arange(n_splits):
+        train_split_key = f'split{split}_train_score'
+        test_split_key = f'split{split}_test_score'
+
+        best_estimator_train_score = \
+            cv_results_[train_split_key][best_estimator_index_]
+        best_estimator_test_score = \
+            cv_results_[test_split_key][best_estimator_index_]
+
+        train_scores.append(best_estimator_train_score)
+        test_scores.append(best_estimator_test_score)
+    return train_scores, test_scores
+
+
+def fit_grid_search_(
     models_dict_,
     X_,
     Y_,
@@ -329,7 +351,7 @@ def fit_grid_search(
     }
     for name, model in models_dict_.items():
         print(f'Fitting {name}')
-        
+
         grid_search_estimator = GridSearchCV(
             model.model,
             param_grid=model.grid_search_param_grid,
@@ -342,6 +364,24 @@ def fit_grid_search(
 
         grid_search_result = grid_search_estimator.fit(X_, Y_)
         res[name] = grid_search_result
+
+        train_scores, test_scores = _collect_train_test_scores(
+            grid_search_result.cv_results_,
+            grid_search_result.best_index_)
+        assert len(train_scores) == len(test_scores)
+
+        # Plotting
+        x = np.arange(1, len(train_scores) + 1)
+        WIDTH = 0.5
+        _, ax = plt.subplots()
+        ax.bar(x - WIDTH / 2, test_scores, WIDTH, label='validation')
+        ax.bar(x + WIDTH / 2, train_scores, WIDTH, label='train')
+        ax.set_title(name)
+        ax.legend(loc='lower right')
+        ax.set_xlabel('Number of fold')
+        ax.set_ylabel('Metrics')
+        ax.grid()
+
     return res
 
 
