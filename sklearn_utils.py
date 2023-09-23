@@ -145,6 +145,12 @@ def nan_statistics(df, nan_thresh=0.0):
             del res[key]
     return res
 
+def nan_report(df, threshold):
+    nan_percent_df = df.isna().sum() / df.shape[0]
+    subset = nan_percent_df[nan_percent_df > threshold]
+    print(f'{subset.shape[0]} / {df.shape[1]} cols ({round(subset.shape[0]/df.shape[1], 2) * 100} %) have nan % > {threshold}\n')
+    print(subset)
+    return subset
 
 def inf_statistics(
     df_,
