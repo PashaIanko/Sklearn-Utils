@@ -475,3 +475,19 @@ def report_feature_histograms(df, n_cols, figsize=(20, 50), hist_params={}):
     for i, col in enumerate(df.columns.to_list()):
         _ = ax[i].hist(df[col], **hist_params)
         ax[i].set_title(col)
+
+def bin_column(df, column_name, bins, to_plot=True):
+    # For feature binning (bucketizing)
+    labels = np.arange(len(bins) - 1)
+
+    _, ax = plt.subplots()
+    ax.hist(df[column_name])
+    for bin in bins:
+        ax.axvline(bin, linestyle='--', color='white')
+    ax.set_title(column_name)
+
+    df[f'{column_name}_binned'] = pd.cut(
+        df[column_name],
+        bins=bins,
+        labels=labels
+    )
