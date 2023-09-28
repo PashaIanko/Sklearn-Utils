@@ -464,7 +464,7 @@ def dict_subset(dict_, keys_):
             print(f'Did not find {key} in dictionary')
     return res
 
-def report_feature_histograms(df, n_cols, figsize=(20, 50), hist_params={}):
+def report_feature_histograms(df, n_cols, columns, figsize=(20, 50), hist_params={}):
     n_features = df.shape[1]
     temp = n_features // n_cols
     n_rows = temp if n_features % n_cols == 0 else temp + 1
@@ -472,7 +472,7 @@ def report_feature_histograms(df, n_cols, figsize=(20, 50), hist_params={}):
     _, ax = plt.subplots(nrows=n_rows, ncols=n_cols, figsize=figsize)
     ax = ax.flatten()
 
-    for i, col in enumerate(df.columns.to_list()):
+    for i, col in enumerate(columns):
         _ = ax[i].hist(df[col], **hist_params)
         ax[i].set_title(col)
 
