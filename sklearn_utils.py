@@ -503,6 +503,7 @@ def do_feature_cross(df, column_name):
     encoder = OneHotEncoder()
     transformed_df = pd.DataFrame(encoder.fit_transform(df[[column_name]]).toarray())
     print(f'NANs after preprocessing: {transformed_df.isna().sum().sum()}')
+    print(f'Categories, learned by encoder: {encoder.categories_}')
 
     # Aligning index to avoid NAN after join
     transformed_df.index = df.index
