@@ -7,6 +7,7 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.model_selection import RandomizedSearchCV
 from tabulate import tabulate
 import pandas as pd
+from sklearn.preprocessing import OneHotEncoder
 
 '''
 def boxplot_regression(df_, cat_feature_, target_feature_)
@@ -492,3 +493,18 @@ def bin_column(df, column_name, bins, to_plot=True):
         bins=bins,
         labels=labels
     )
+
+def do_feature_cross(df, column_name):
+    assert column_name in df.columns, print(f'{column_name} is not in columns')
+
+    categories = df[column_name].unique()
+    print(f'Categories before processing: {categories}')
+
+    encoder = OneHotEncoder()
+    transformed_df = pd.DataFrame(encoder.fit_transform(df[[column_name]]).toarray())
+    print(f'NANs after preprocessing: {transformed_df.isna().sum().sum()}')
+
+    # Aligning index to avoid NAN after join
+    transformed_df.index = df.index
+    df = df.join(transformed_df)
+    return df
