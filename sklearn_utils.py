@@ -485,7 +485,7 @@ def bin_column(df, column_name, bins, to_plot=True):
     _, ax = plt.subplots()
     ax.hist(df[column_name])
     for bin in bins:
-        ax.axvline(bin, linestyle='--', color='white')
+        ax.axvline(bin, linestyle='--', color='red')
     ax.set_title(column_name)
 
     df[f'{column_name}_binned'] = pd.cut(
