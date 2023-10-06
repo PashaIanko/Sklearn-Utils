@@ -8,6 +8,8 @@ from sklearn.model_selection import RandomizedSearchCV
 from tabulate import tabulate
 import pandas as pd
 from sklearn.preprocessing import OneHotEncoder
+from sklearn.metrics import confusion_matrix
+from sklearn.metrics import ConfusionMatrixDisplay
 
 '''
 def boxplot_regression(df_, cat_feature_, target_feature_)
@@ -509,3 +511,39 @@ def do_feature_cross(df, column_name):
     transformed_df.index = df.index
     df = df.join(transformed_df)
     return df
+
+def plot_confusion_matrix(Y_true, Y_pred, labels, figsize=(15, 8)):
+    conf_mat = confusion_matrix(y_true=Y_true, y_pred=Y_pred)
+    print(f'Rows: groundtruth classes, columns: predicted classes!')
+
+    fig, ax = plt.subplots(1, 2, figsize=figsize)
+    ax = ax.flatten()
+    ax[0].set_title(f'Confusion mat. \n with no highlight by A.Geron')
+
+    c = ConfusionMatrixDisplay(conf_mat, display_labels=labels)
+    
+    c.plot(ax=ax[0])
+    ax[0].set_xticklabels(labels, rotation=90)
+    
+
+    row_sums = conf_mat.sum(axis=1, keepdims=True)
+    norm_conf_mx = conf_mat / row_sums
+    np.fill_diagonal(norm_conf_mx, 0)
+    
+    ConfusionMatrixDisplay(norm_conf_mx, display_labels=labels).plot(ax=ax[1])
+    ax[1].set_title(f'Confusion mat. \n with highlight by A.Geron')
+    ax[1].set_xticklabels(labels, rotation=90)
+
+    
+    fig.delaxes(fig.axes[3])
+    fig.delaxes(fig.axes[2])
+
+
+def output_classification_mistakes(Y_predicted, Y_true, label_encoder):
+    idxs = np.where(Y_predicted != Y_true)[0]
+    for idx in idxs:
+        # print(idx, predictions[idx])
+        print(f'''
+        Predicted: {label_encoder.inverse_transform(Y_predicted[[idx]])},
+        Actual: {label_encoder.inverse_transform(Y_true[[idx]])}
+        ''')
