@@ -496,20 +496,23 @@ def bin_column(df, column_name, bins, to_plot=True):
         labels=labels
     )
 
-def do_feature_cross(df, column_name):
+def do_feature_cross(df, column_name, trained_one_hot_encoder):
     assert column_name in df.columns, print(f'{column_name} is not in columns')
 
-    categories = df[column_name].unique()
-    print(f'Categories before processing: {categories}')
-
-    encoder = OneHotEncoder()
-    transformed_df = pd.DataFrame(encoder.fit_transform(df[[column_name]]).toarray())
-    print(f'NANs after preprocessing: {transformed_df.isna().sum().sum()}')
-    print(f'Categories, learned by encoder: {encoder.categories_}')
-
+    categories_in_df = df[column_name].unique()
+    for cat in categories_in_df:
+        assert cat in trained_one_hot_encoder.categories_[0], \
+            print(f'Category {cat} is not learned, but is in the dataframe')
+    
+    print(f'NANs before preprocessing: {df.isna().sum().sum()}')
+    print(f'Shape before: {df.shape}')
+    transformed_df = pd.DataFrame(encoder.transform(df[[column_name]]).toarray())
+    
     # Aligning index to avoid NAN after join
     transformed_df.index = df.index
     df = df.join(transformed_df)
+    print(f'NANs after preprocessing: {df.isna().sum().sum()}')
+    print(f'Shape after: {df.shape}')
     return df
 
 def plot_confusion_matrix(Y_true, Y_pred, labels, figsize=(15, 8)):
