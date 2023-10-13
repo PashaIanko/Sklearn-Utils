@@ -185,46 +185,53 @@ def inf_report(df, inf_threshold):
     return inf_percentages
 
 def visualize_datasets_distributions(
-    dataframes_dict_,
-    columns_,
-    grid_width_=3,
-    figwidth_=10
+    dataframes_dict,
+    columns,
+    grid_width=3,
+    figwidth=10
 ):
     print(f'Visualizing datasets distributions')
-    n_plots = len(columns_)
-    if n_plots % grid_width_ == 0:
-        grid_height = int(n_plots / grid_width_)
+    n_plots = len(columns)
+    if n_plots % grid_width == 0:
+        grid_height = int(n_plots / grid_width)
     else:
-        grid_height = int(n_plots / grid_width_) + 1
+        grid_height = int(n_plots / grid_width) + 1
         
     
     HEIGHT_RESOLUTION = 3.2
 
     _, ax = plt.subplots(
-        grid_height,
-        grid_width_,
-        figsize=(figwidth_, int(HEIGHT_RESOLUTION * grid_height))
+        nrows=grid_height,
+        ncols=grid_width,
+        figsize=(figwidth, int(HEIGHT_RESOLUTION * grid_height))
     )
+    if grid_height == grid_width == 1:
+        ax = np.array([[ax]])
+    elif grid_width == 1:
+        ax = np.expand_dims(ax, axis=1)
+    elif grid_height == 1:
+        ax = np.expand_dims(ax, axis=0)
 
+
+    print(ax.shape, type(ax))
     for i in range(grid_height):
-        for j in range(grid_width_):
-            cur_column_number = i * (grid_width_) + j
+        for j in range(grid_width):
+            cur_column_number = i * (grid_width) + j
             
             if cur_column_number >= n_plots:
                 return
 
             columns_data = {}
-            for dataset_name, df in dataframes_dict_.items():
+            for dataset_name, df in dataframes_dict.items():
 
                 columns_data[dataset_name] = \
-                    df.loc[:, columns_[cur_column_number]].values
+                    df.loc[:, columns[cur_column_number]].values
 
             for dataset_name, data in columns_data.items():
                 ax[i, j].hist(data, density=True, alpha=0.3, label=dataset_name)
 
-            ax[i, j].set_title(f'{columns_[cur_column_number]}')
+            ax[i, j].set_title(f'{columns[cur_column_number]}')
             ax[i, j].legend()
-
 
 def print_model_cv_scores(sklearn_models_dict_, X_, Y_, cv_, scoring_):
     res = {}
