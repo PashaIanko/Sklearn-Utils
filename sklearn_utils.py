@@ -255,6 +255,27 @@ def print_model_cv_scores(sklearn_models_dict_, X_, Y_, cv_, scoring_):
 
     return sorted_res
 
+def visualize_target_vs_columns(df, target_colname, columns, grid_width=5, width_scale=3.0, height_scale=3.0):
+    grid_height = len(columns) // grid_width if len(columns) % grid_width == 0 \
+        else len(columns) // grid_width + 1
+
+    # create the figure
+    fig, axes = plt.subplots(ncols=grid_width, nrows=grid_height, figsize=(
+        int(width_scale * grid_width), int(height_scale * grid_height))
+    )
+
+    # flatten the axes to make it easier to index
+    axes = axes.flatten()
+
+    # iterate through the column values, and use i to index the axes
+    for i, v in enumerate(columns):
+        
+        # plot the actual price against the features
+        axes[i].scatter(x=df[v], y=df[target_colname], s=35, ec='white', label='actual')
+        
+        # set the title and ylabel
+        axes[i].set(title=f'Feature: {v}', ylabel='price')
+    plt.tight_layout()
 
 def _print_sorted_results(cv_metrics_results_):
     metrics_dict = {
