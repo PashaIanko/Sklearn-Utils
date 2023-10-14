@@ -588,3 +588,11 @@ def output_classification_mistakes(Y_predicted, Y_true, label_encoder):
         Predicted: {label_encoder.inverse_transform(Y_predicted[[idx]])},
         Actual: {label_encoder.inverse_transform(Y_true[[idx]])}
         ''')
+
+def plot_correlation_matrix(df, delete_diagonals=True):
+    corr_mx = df.corr()
+    if delete_diagonals:
+        n = corr_mx.shape[0]
+        corr_mx.values[range(n), range(n)] = 0
+    sns.heatmap(corr_mx)
+    return corr_mx
