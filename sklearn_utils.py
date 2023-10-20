@@ -464,32 +464,46 @@ def fit_randomized_search(
     return res
 
 
-def visualize_regression_predictions(
-    sklearn_models_dict_,
-    X_,
-    Y_,
-    dataset_type_
-):
-    _, ax = plt.subplots()
-    ax.plot(
-        Y_,
-        label=f'{dataset_type_} target'
-    )
+# def visualize_regression_predictions(
+#     sklearn_models_dict_,
+#     X_,
+#     Y_,
+#     dataset_type_
+# ):
+#     _, ax = plt.subplots()
+#     ax.plot(
+#         Y_,
+#         label=f'{dataset_type_} target'
+#     )
 
-    for model_name, model in sklearn_models_dict_.items():
-        predictions = model.predict(X_)
-        ax.scatter(
-            x=np.arange(len(predictions)),
-            y=predictions,
-            label=f'{model_name} predictions'
-        )
+#     for model_name, model in sklearn_models_dict_.items():
+#         predictions = model.predict(X_)
+#         ax.scatter(
+#             x=np.arange(len(predictions)),
+#             y=predictions,
+#             label=f'{model_name} predictions'
+#         )
 
-    ax.set_xlabel('Dataset instance')
-    ax.set_ylabel('Prediction')
-    ax.set_title(f'Visualized predictons on {dataset_type_}')
+#     ax.set_xlabel('Dataset instance')
+#     ax.set_ylabel('Prediction')
+#     ax.set_title(f'Visualized predictons on {dataset_type_}')
 
-    ax.legend()
+#     ax.legend()
+#     ax.grid()
+
+def visualize_predictions(model, X, Y):
+    fig, ax = plt.subplots()
+    predictions=model.predict(X)
+    ax.scatter(x=predictions, y=Y)
+    ax.set_xlabel('Predicted')
+    ax.set_ylabel('Ground truth')
+    
+    max_val = max(np.max(predictions), np.max(Y))
+    min_val = min(np.min(predictions), np.min(Y))
+
+    ax.plot(np.linspace(min_val, max_val, 50), np.linspace(min_val, max_val, 50), color='red', label='x==y')
     ax.grid()
+    ax.legend()
     
 
 def dict_subset(dict_, keys_):
